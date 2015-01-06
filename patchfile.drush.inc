@@ -75,6 +75,7 @@ function drush_patchfile_patch_status($project_name = NULL) {
 
   $rows = array();
   $rows[] = array(dt('Project'), dt('Patch'), dt('Applied'));
+  $result = array();
 
   foreach ($projects as $project_name => $project_info) {
     $project_directory = drush_patchfile_project_get_directory($project_name);
@@ -90,8 +91,18 @@ function drush_patchfile_patch_status($project_name = NULL) {
         _drush_patchfile_patch_short_name($patch),
         drush_patchfile_is_patch_applied($patch, $project_directory, TRUE),
       );
+      // Format backend result
+      $result[] = array(
+        'project' => $project_name,
+        'directory' => $project_directory,
+        'patch' => _drush_patchfile_patch_short_name($patch),
+        'applied' => drush_patchfile_is_patch_applied($patch, $project_directory),
+      );
     }
   }
+
+  // Output backend result
+  drush_backend_set_result($result);
 
   drush_print_table($rows, TRUE);
 }
